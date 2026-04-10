@@ -601,8 +601,10 @@ function buildBubbleRecs(data, stage) {
 
     Object.entries(group).forEach(([key, value]) => {
       if (key === "length") return;
+
       const bubbleIndex = Number(key);
       const lvl = Number(value);
+
       if (!Number.isFinite(lvl) || lvl < 1) return;
 
       let impact = 0;
@@ -624,6 +626,39 @@ function buildBubbleRecs(data, stage) {
       } else {
         return;
       }
+
+      const bubbleName = BUBBLE_NAMES[groupIndex]?.[bubbleIndex] || `Unknown Bubble ${bubbleIndex + 1}`;
+      const cauldronName = CAULDRON_NAMES[groupIndex] || `Cauldron ${groupIndex + 1}`;
+
+      recs.push({
+        title: bubbleName,
+        groupTitle: cauldronName,
+        category: "Bubbles",
+        subcategory: cauldronName,
+        impact: Math.round(impact),
+        effort,
+        confidence: 6,
+        score: scoreFormula({
+          impact,
+          effort,
+          urgency,
+          accountWide: 5.5,
+          catchUp: stage === "early" ? 7 : 5,
+          confidence: 6
+        }),
+        why: `${bubbleName} is at level ${lvl}, which is still a useful catch-up range.`,
+        detail: `From the ${cauldronName} cauldron.`,
+        currentLevel: lvl,
+        nextTarget: lvl + 1,
+        costText: "Exact bubble cost not available from current payload.",
+        iconKey: `bubble-${groupIndex}-${bubbleIndex}`,
+        fallback: "🫧"
+      });
+    });
+  });
+
+  return recs;
+}
 
       const name = makeBubbleName(groupIndex, bubbleIndex);
       let costText = "Exact bubble cost not available from current payload.";
@@ -1013,18 +1048,30 @@ function renderRecommendations() {
     : lastResult.recs.filter(rec => rec.category === activeFilter);
 
   filtered = sortRecommendations(filtered, sortSelect.value);
+
+  if (activeFilter === "Bubbles") {
+    const grouped = {};
+
+    for (const rec of filtered) {
+      const group = rec.subcategory || "Other";
+      if (!grouped[group]) grouped[group] = [];
+      grouped[group].push(rec);
+    }
+
+    recommendationList.innerHTML = Object.entries(grouped).map(([groupName, items]) => `
+      <div class="panel" style="padding:16px;">
+        <h4 style="margin-top:0;">${groupName} Cauldron</h4>
+        <div class="stack">
+          ${items.map(rec => renderRecCard(rec)).join("")}
+        </div>
+      </div>
+    `).join("");
+
+    return;
+  }
+
   recommendationList.innerHTML = filtered.map(rec => renderRecCard(rec)).join("");
 }
-
-function renderResults(result) {
-  lastResult = result;
-
-  const bestSorted = sortRecommendations(result.recs, "score-desc");
-  const best = bestSorted[0];
-
-  if (!best) {
-    throw new Error("No recommendations were produced from this profile.");
-  }
 
   const emptyState = $("emptyState");
   const results = $("results");
