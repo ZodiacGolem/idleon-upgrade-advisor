@@ -258,8 +258,9 @@ function inferStage(data) {
 
 function makeBubbleName(cauldronIndex, bubbleIndex) {
   const cauldronName = CAULDRON_NAMES[cauldronIndex] || `Cauldron ${cauldronIndex + 1}`;
-  const bubbleName = BUBBLE_NAMES[cauldronIndex]?.[bubbleIndex] || `Bubble ${bubbleIndex + 1}`;
-  return `${cauldronName} - ${bubbleName}`;
+  const bubbleName = BUBBLE_NAMES[cauldronIndex]?.[bubbleIndex] || `Unknown Bubble ${bubbleIndex + 1}`;
+  
+  return `${bubbleName} (${cauldronName})`;
 }
 
 function makeStampName(tabIndex, slotIndex) {
@@ -645,7 +646,7 @@ function buildBubbleRecs(data, stage) {
           confidence: 6
         }),
         why: `${name} is at level ${lvl}, which is still a useful catch-up range.`,
-        detail: `${CAULDRON_NAMES[groupIndex]} Cauldron bubble.`,
+        detail: `From the ${CAULDRON_NAMES[groupIndex] || `Cauldron ${groupIndex + 1}`} cauldron.`,
         currentLevel: lvl,
         nextTarget: lvl + 1,
         costText,
