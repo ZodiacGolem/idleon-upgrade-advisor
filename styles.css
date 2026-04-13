@@ -56,6 +56,12 @@ h1 {
   line-height: 1.05;
 }
 
+h2,
+h3,
+h4 {
+  margin-top: 0;
+}
+
 .subtitle {
   margin: 12px 0 0;
   max-width: 860px;
@@ -87,10 +93,6 @@ h1 {
 .primary-card {
   background: linear-gradient(180deg, rgba(121, 169, 255, 0.12), rgba(121, 169, 255, 0.03));
   border-color: rgba(121, 169, 255, 0.2);
-}
-
-.compact-panel {
-  padding: 16px;
 }
 
 label {
@@ -247,6 +249,7 @@ button:hover,
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.05);
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .primary-icon-wrap {
@@ -392,10 +395,6 @@ button:hover,
   border-color: rgba(43, 58, 96, 0.7);
 }
 
-.group-title {
-  margin: 0 0 12px;
-}
-
 .book-alert {
   display: grid;
   grid-template-columns: 56px 1fr;
@@ -454,5 +453,14 @@ button:hover,
   .toolbar {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .page {
+    padding: 20px 14px 40px;
+  }
+
+  .panel,
+  .primary-card {
+    padding: 18px;
   }
 }
